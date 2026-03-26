@@ -1,1 +1,804 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بلدية داعل — تسجيل دفاتر العائلة</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+:root{--pr:#1b3d6e;--prl:#2558a0;--prd:#122d52;--ac:#c0933a;--bg:#eef2f7;--cd:#fff;--tx:#1a2535;--mu:#607080;--bd:#ccd8e8;--ok:#1f6b47;--er:#b83030;--ra:12px;--sh:0 6px 28px rgba(27,61,110,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:60px;direction:rtl}
+.hdr{width:100%;background:linear-gradient(150deg,var(--prd),var(--pr) 55%,var(--prl));color:#fff;box-shadow:0 4px 24px rgba(27,61,110,.22)}
+.hdr-top{display:flex;align-items:center;gap:18px;padding:22px 36px 16px}
+.embl{width:66px;height:66px;background:rgba(255,255,255,.1);border:2px solid rgba(192,147,58,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0}
+.hdr-top h1{font-size:1.35rem;font-weight:900;line-height:1.3}.hdr-top p{font-size:.8rem;opacity:.7;margin-top:3px}
+.hdr-bar{background:rgba(0,0,0,.18);padding:7px 36px;font-size:.76rem;opacity:.85;line-height:1.7;display:flex;gap:20px;flex-wrap:wrap}
+.hdr-bar span{display:flex;align-items:center;gap:4px}
+.wrap{width:100%;max-width:700px;margin:30px auto 0;padding:0 14px}
+.notice{background:#fff8e8;border:1.5px solid var(--ac);border-radius:14px;padding:16px 18px;margin-bottom:24px;font-size:.84rem;color:#5a3d00;line-height:1.8}
+.notice strong{display:block;font-size:.95rem;font-weight:900;margin-bottom:6px;color:var(--pr)}
+.stepper{display:flex;align-items:flex-start;margin-bottom:22px}
+.si{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;z-index:1}
+.si:not(:last-child)::after{content:'';position:absolute;top:19px;left:0;width:100%;height:2.5px;background:var(--bd);z-index:0;transform:translateX(-50%);transition:background .4s}
+.si.done:not(:last-child)::after{background:var(--ok)}
+.sc{width:40px;height:40px;border-radius:50%;background:var(--cd);border:2.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:var(--mu);transition:all .3s;position:relative;z-index:2;box-shadow:0 2px 8px rgba(27,61,110,.07)}
+.si.active .sc{background:var(--pr);border-color:var(--pr);color:#fff;box-shadow:0 0 0 5px rgba(27,61,110,.13)}
+.si.done .sc{background:var(--ok);border-color:var(--ok);color:#fff}
+.sl{font-size:.62rem;color:var(--mu);margin-top:5px;font-weight:700;text-align:center;white-space:nowrap}
+.si.active .sl{color:var(--pr)}.si.done .sl{color:var(--ok)}
+.prog{height:4px;background:var(--bd);border-radius:99px;overflow:hidden;margin-bottom:24px}
+.pf{height:100%;background:linear-gradient(90deg,var(--pr),var(--ac));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.card{background:var(--cd);border-radius:20px;box-shadow:var(--sh);padding:32px 32px 24px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;right:0;width:110px;height:110px;background:linear-gradient(135deg,rgba(192,147,58,.07),transparent);border-radius:0 20px 0 110px}
+.shdr{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.sico{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,var(--pr),var(--prl));display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;flex-shrink:0;box-shadow:0 4px 14px rgba(27,61,110,.22)}
+.stit{font-size:1.05rem;font-weight:900;color:var(--tx)}.ssub{font-size:.79rem;color:var(--mu);margin-top:2px}
+/* بطاقات الاختيار */
+.big-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.big-cards-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;margin-bottom:6px}
+.bc{border:2.5px solid var(--bd);border-radius:16px;padding:18px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:9px;background:var(--bg);transition:all .25s;text-align:center;position:relative}
+.bc:hover{border-color:var(--prl);background:#fff;transform:translateY(-2px);box-shadow:0 4px 16px rgba(27,61,110,.10)}
+.bc.sel{border-color:var(--pr);background:rgba(27,61,110,.05);box-shadow:0 4px 18px rgba(27,61,110,.14)}
+.bc input{display:none}
+.bc-ico{font-size:2rem;width:54px;height:54px;border-radius:13px;background:var(--cd);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(27,61,110,.10);transition:background .2s}
+.bc.sel .bc-ico{background:var(--pr)}
+.bc-name{font-size:.87rem;font-weight:900;color:var(--tx);line-height:1.2}
+.bc-desc{font-size:.71rem;color:var(--mu);line-height:1.4}
+.bc-badge{position:absolute;top:8px;left:8px;background:var(--pr);color:#fff;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:20px;opacity:0;transition:opacity .2s}
+.bc.sel .bc-badge{opacity:1}
+/* حقل مطلقة — لون مختلف */
+.bc.div-card.sel{border-color:#7b4fa0;background:rgba(123,79,160,.05);box-shadow:0 4px 18px rgba(123,79,160,.12)}
+.bc.div-card.sel .bc-ico{background:#7b4fa0}
+.bc.div-card.sel .bc-badge{background:#7b4fa0}
+/* ملاحظة */
+.note-box{background:#fff8e8;border-right:4px solid var(--ac);border-radius:10px;padding:11px 13px;font-size:.8rem;color:#7a5000;margin-top:8px;display:none}
+/* حقول */
+.fg{margin-bottom:16px}
+.lbl{display:flex;align-items:center;gap:5px;font-size:.83rem;font-weight:700;color:var(--tx);margin-bottom:6px}
+.req{color:var(--er)}.hint{font-size:.73rem;color:var(--mu);margin-top:4px;line-height:1.5}
+input[type=text],select,textarea{width:100%;padding:11px 13px;border:2px solid var(--bd);border-radius:var(--ra);font-family:'Cairo',sans-serif;font-size:.92rem;color:var(--tx);background:var(--bg);transition:all .2s;outline:none;direction:rtl}
+input:focus,select:focus,textarea:focus{border-color:var(--prl);background:#fff;box-shadow:0 0 0 4px rgba(27,61,110,.08)}
+input.er,select.er,textarea.er{border-color:var(--er)}
+.em{color:var(--er);font-size:.74rem;margin-top:4px;display:none;font-weight:700}.em.show{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+/* radio صغير */
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rc{border:2px solid var(--bd);border-radius:var(--ra);padding:12px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--bg);transition:all .2s}
+.rc:hover{border-color:var(--prl);background:#fff}
+.rc.sel{border-color:var(--pr);background:rgba(27,61,110,.05);box-shadow:0 2px 10px rgba(27,61,110,.09)}
+.rc input,.sc2 input{display:none}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);background:#fff;flex-shrink:0;transition:all .2s}
+.rc.sel .dot,.sc2.sel .dot{background:var(--pr);border-color:var(--pr);box-shadow:inset 0 0 0 3px #fff}
+.rc-em{font-size:.83rem;font-weight:700;color:var(--tx)}.rc-sub{font-size:.72rem;color:var(--mu);margin-top:1px}
+/* stamp */
+.sc2{border:2px solid var(--bd);border-radius:var(--ra);padding:12px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--bg);transition:all .2s}
+.sc2:hover{border-color:var(--prl);background:#fff}
+.sc2.sel{border-color:var(--pr);background:rgba(27,61,110,.05)}
+.s-ico{font-size:1.3rem;width:36px;height:36px;border-radius:8px;background:var(--cd);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sc2.sel .s-ico{background:var(--pr)}
+/* عدد أفراد */
+.count-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.chip{padding:9px 4px;border:1.5px solid var(--bd);border-radius:10px;font-size:.82rem;font-weight:700;color:var(--tx);background:#fff;cursor:pointer;transition:all .18s;text-align:center}
+.chip:hover{border-color:var(--prl);color:var(--prl)}.chip.on{background:var(--pr);border-color:var(--pr);color:#fff}
+/* الحي */
+.hood-chips{display:flex;flex-wrap:wrap;gap:8px}
+.hchip{padding:8px 14px;border:1.5px solid var(--bd);border-radius:20px;font-size:.8rem;font-weight:700;color:var(--tx);background:#fff;cursor:pointer;transition:all .18s;white-space:nowrap}
+.hchip:hover{border-color:var(--prl);color:var(--prl)}.hchip.on{background:var(--pr);border-color:var(--pr);color:#fff}
+/* تبويبات الشارع */
+.tabs{display:flex;border:1.5px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.tab{flex:1;padding:8px 0;text-align:center;font-size:.77rem;font-weight:700;color:var(--mu);cursor:pointer;background:var(--bg);transition:all .2s;border-left:1px solid var(--bd)}
+.tab:first-child{border-left:none}.tab.on{background:var(--pr);color:#fff}
+.str-chips{display:flex;flex-wrap:wrap;gap:6px}
+.schip{padding:6px 11px;border:1.5px solid var(--bd);border-radius:20px;font-size:.79rem;font-weight:700;color:var(--tx);background:#fff;cursor:pointer;transition:all .18s;white-space:nowrap}
+.schip:hover{border-color:var(--prl);color:var(--prl)}.schip.on{background:var(--pr);border-color:var(--pr);color:#fff}
+.schip.lm{border-color:#c8a430;color:#7a5000;background:#fffbee}
+.schip.lm:hover,.schip.lm.on{background:var(--ac);border-color:var(--ac);color:#fff}
+/* autocomplete */
+.sw{position:relative;margin-top:9px}
+.sbox{position:absolute;top:calc(100% + 3px);right:0;left:0;background:var(--cd);border:2px solid var(--prl);border-radius:var(--ra);box-shadow:0 8px 24px rgba(27,61,110,.14);z-index:100;max-height:200px;overflow-y:auto;display:none}
+.sbox.open{display:block}
+.si2{padding:9px 13px;cursor:pointer;font-size:.84rem;color:var(--tx);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:8px;transition:background .12s}
+.si2:last-child{border-bottom:none}.si2:hover{background:rgba(27,61,110,.06)}
+.st{font-size:.67rem;color:var(--mu);background:var(--bg);border-radius:4px;padding:1px 5px;white-space:nowrap}
+/* أزرار */
+.nav{display:flex;gap:10px;margin-top:24px}
+.btn{flex:1;padding:13px 20px;background:linear-gradient(135deg,var(--pr),var(--prl));color:#fff;border:none;border-radius:var(--ra);font-family:'Cairo',sans-serif;font-size:.94rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .22s;box-shadow:0 4px 14px rgba(27,61,110,.25)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(27,61,110,.3)}.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.back{padding:13px 16px;background:var(--bg);color:var(--tx);border:2px solid var(--bd);border-radius:var(--ra);font-family:'Cairo',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;transition:all .2s}
+.back:hover{border-color:var(--pr);color:var(--pr);background:#fff}
+/* ملخص */
+.sum{list-style:none}
+.srow{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--bd);gap:10px}
+.srow:last-child{border-bottom:none}
+.sk{font-size:.78rem;color:var(--mu);font-weight:700;flex-shrink:0;min-width:130px}
+.sv{font-size:.88rem;color:var(--tx);font-weight:700;text-align:left}
+.sum-sec{font-size:.72rem;font-weight:800;color:var(--pr);padding:10px 0 4px;letter-spacing:.3px;border-top:2px solid var(--bd);margin-top:4px}
+.sum-sec:first-child{border-top:none;margin-top:0}
+.cnote{background:#f0f9f4;border:1.5px solid #a0d8b8;border-radius:10px;padding:11px 13px;font-size:.78rem;color:#1a5c35;margin-top:14px}
+/* رقم مرجعي مميز */
+.ref-preview{background:linear-gradient(135deg,rgba(27,61,110,.06),rgba(27,61,110,.02));border:2px dashed var(--prl);border-radius:14px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ref-preview .ref-label{font-size:.78rem;color:var(--mu);font-weight:700}
+.ref-preview .ref-num{font-size:1.1rem;font-weight:900;color:var(--pr);letter-spacing:1px;font-variant-numeric:tabular-nums}
+.ref-preview .ref-copy{background:var(--pr);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-family:'Cairo',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ref-preview .ref-copy:hover{background:var(--prl)}
+.ref-preview .ref-copy.copied{background:var(--ok)}
+/* spinner / err */
+.spin{display:inline-block;width:16px;height:16px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ferr{display:none;align-items:center;gap:8px;background:#fdf0ee;border:1.5px solid #e74c3c;border-radius:10px;padding:10px 13px;margin-top:10px;color:var(--er);font-size:.79rem;font-weight:700}
+/* success */
+.succ{text-align:center;padding:12px 0}
+.succ-ico{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--ok),#2a9460);margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 8px 28px rgba(31,107,71,.28);animation:pop .5s cubic-bezier(.4,0,.2,1)}
+@keyframes pop{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.07)}100%{transform:scale(1);opacity:1}}
+.succ h2{font-size:1.35rem;font-weight:900;color:var(--ok);margin-bottom:5px}
+.succ p{color:var(--mu);font-size:.86rem;margin-bottom:14px}
+.refbox-big{background:linear-gradient(135deg,var(--pr),var(--prl));color:#fff;border-radius:16px;padding:18px 28px;display:inline-block;margin-bottom:10px;box-shadow:0 4px 18px rgba(27,61,110,.25);min-width:260px}
+.refbox-big small{display:block;font-size:.72rem;opacity:.7;margin-bottom:4px}
+.refbox-big strong{font-size:1.25rem;font-weight:900;letter-spacing:1.5px;font-variant-numeric:tabular-nums}
+.ref-hint{background:#e8f4ff;border-radius:10px;padding:11px 14px;font-size:.79rem;color:#1a3d6e;margin:10px 0 18px;font-weight:600;line-height:1.6}
+.ref-hint strong{display:block;font-weight:900;margin-bottom:3px}
+.copy-btn{background:#fff;color:var(--pr);border:2px solid var(--pr);border-radius:10px;padding:8px 18px;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;margin-bottom:14px}
+.copy-btn:hover{background:var(--pr);color:#fff}
+.copy-btn.copied{background:var(--ok);border-color:var(--ok);color:#fff}
+.newbtn{padding:11px 26px;background:#fff;color:var(--pr);border:2px solid var(--pr);border-radius:var(--ra);font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .2s}
+.newbtn:hover{background:var(--pr);color:#fff}
+/* panels */
+.pnl{display:none;animation:sl .3s cubic-bezier(.4,0,.2,1)}.pnl.active{display:block}
+@keyframes sl{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+/* divider */
+.or-div{text-align:center;color:var(--mu);font-size:.76rem;font-weight:700;margin:12px 0;position:relative}
+.or-div::before,.or-div::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--bd)}
+.or-div::before{right:0}.or-div::after{left:0}
+@media(max-width:520px){
+  .card{padding:18px 13px 16px}.hdr-top{padding:14px 13px 11px}
+  .hdr-bar{padding:6px 13px;font-size:.7rem}
+  .g2{grid-template-columns:1fr}.big-cards-3{grid-template-columns:1fr}
+  .sl{font-size:.57rem}.wrap{padding:0 7px}.sk{min-width:95px}
+  .count-grid{grid-template-columns:repeat(3,1fr)}
+  .refbox-big{min-width:unset;width:100%}
+}
+</style>
+</head>
+<body>
 
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="embl">🏛️</div>
+    <div>
+      <h1>بلدية مدينة داعل</h1>
+      <p>محافظة درعا — الجمهورية العربية السورية</p>
+    </div>
+  </div>
+  <div style="background:rgba(0,0,0,.2);padding:0 36px;display:flex;gap:4px">
+    <a href="index.html" style="padding:10px 18px;font-size:.82rem;font-weight:700;color:#fff;text-decoration:none;border-bottom:3px solid var(--ac);display:flex;align-items:center;gap:6px">📋 التسجيل</a>
+    <a href="stats.html" style="padding:10px 18px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px">📊 الإحصائيات</a>
+    <a href="search.html" style="padding:10px 18px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px">🔍 البحث</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="notice">
+    <strong>📢 إعلان بلدية داعل</strong>
+    تعلن البلدية عن إدخال معلومات جميع دفاتر العائلة والبيانات العائلية إلكترونياً.
+    نرجو من كل من يملك دفتر عائلة أو بيان عائلي أن يجيب على الأسئلة المطلوبة،
+    وأن تساعدوا كبار السن من آبائكم في إدخال المعلومات.
+  </div>
+
+  <div class="stepper" id="stepper">
+    <div class="si active"><div class="sc">1</div><div class="sl">نوع التسجيل</div></div>
+    <div class="si"><div class="sc">2</div><div class="sl">نوع الوثيقة</div></div>
+    <div class="si"><div class="sc">3</div><div class="sl">البيانات</div></div>
+    <div class="si"><div class="sc">4</div><div class="sl">الأسرة</div></div>
+    <div class="si"><div class="sc">5</div><div class="sl">السكن</div></div>
+    <div class="si"><div class="sc">6</div><div class="sl">المراجعة</div></div>
+  </div>
+  <div class="prog"><div class="pf" id="pf" style="width:8%"></div></div>
+
+  <div class="card">
+
+    <!-- STEP 0 — نوع التسجيل -->
+    <div class="pnl active" id="s0">
+      <div class="shdr"><div class="sico">👥</div><div><div class="stit">نوع التسجيل</div><div class="ssub">هل تسجّل لنفسك أم لشخص آخر؟</div></div></div>
+      <div class="big-cards">
+        <label class="bc sel" id="rc-self" onclick="selBC('regtype','self',this)">
+          <input type="radio" name="regtype" value="self" checked>
+          <div class="bc-badge">✓ مختار</div>
+          <div class="bc-ico">👤</div>
+          <div class="bc-name">تسجيل لنفسي</div>
+          <div class="bc-desc">أنا صاحب الدفتر أو البيان</div>
+        </label>
+        <label class="bc" id="rc-other" onclick="selBC('regtype','other',this)">
+          <input type="radio" name="regtype" value="other">
+          <div class="bc-badge">✓ مختار</div>
+          <div class="bc-ico">👥</div>
+          <div class="bc-name">تسجيل لشخص آخر</div>
+          <div class="bc-desc">أُدخل بيانات أحد أفراد العائلة</div>
+        </label>
+      </div>
+      <div class="note-box" id="other-note">ℹ️ سيتم تسجيل البيانات نيابةً عنه. تأكد من صحة المعلومات المدخلة.</div>
+      <div class="nav"><button class="btn" onclick="next(0)">التالي ←</button></div>
+    </div>
+
+    <!-- STEP 1 — نوع الوثيقة -->
+    <div class="pnl" id="s1">
+      <div class="shdr"><div class="sico">📄</div><div><div class="stit">نوع الوثيقة</div><div class="ssub">اختر نوع الوثيقة التي تريد تسجيلها</div></div></div>
+      <div class="big-cards-3">
+        <label class="bc sel" id="dc-book" onclick="selDoc('book',this)">
+          <input type="radio" name="doctype" value="book" checked>
+          <div class="bc-badge">✓</div>
+          <div class="bc-ico">📖</div>
+          <div class="bc-name">دفتر العائلة</div>
+          <div class="bc-desc">رقم الدفتر ورقم القيد</div>
+        </label>
+        <label class="bc" id="dc-stmt" onclick="selDoc('stmt',this)">
+          <input type="radio" name="doctype" value="stmt">
+          <div class="bc-badge">✓</div>
+          <div class="bc-ico">📋</div>
+          <div class="bc-name">البيان العائلي</div>
+          <div class="bc-desc">رقم القيد فقط</div>
+        </label>
+        <label class="bc div-card" id="dc-div" onclick="selDoc('div',this)">
+          <input type="radio" name="doctype" value="div">
+          <div class="bc-badge">✓</div>
+          <div class="bc-ico">📑</div>
+          <div class="bc-name">مطلقة</div>
+          <div class="bc-desc">وثيقة الطلاق ورقم القيد</div>
+        </label>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="next(1)">التالي ←</button>
+        <button class="back" onclick="prev(1)">→ رجوع</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 — البيانات (متغيّر حسب نوع الوثيقة) -->
+    <div class="pnl" id="s2">
+      <div class="shdr">
+        <div class="sico" id="s2-ico">📝</div>
+        <div><div class="stit" id="s2-tit">بيانات رب الأسرة</div><div class="ssub" id="s2-sub">أرقام الوثيقة والاسم الرباعي</div></div>
+      </div>
+
+      <!-- ─── أرقام الوثيقة ─── -->
+      <div id="field-fbook" class="fg">
+        <label class="lbl" for="fbook">رقم دفتر العائلة <span class="req">*</span></label>
+        <input type="text" id="fbook" placeholder="الرقم المكوّن من 6 أو 9 أرقام" maxlength="9" oninput="numOnly(this)">
+        <div class="hint">📌 موجود على الغلاف الداخلي أعلى الكود باللون الأحمر، أو الغلاف الخارجي للدفاتر القديمة</div>
+        <div class="em" id="e-fbook">الرجاء إدخال رقم الدفتر (6 أو 9 أرقام)</div>
+      </div>
+
+      <!-- رقم الوثيقة (البيان العائلي) -->
+      <div id="field-stmtdoc" class="fg" style="display:none">
+        <label class="lbl" for="stmtdoc">رقم الوثيقة <span class="req">*</span></label>
+        <input type="text" id="stmtdoc" placeholder="الرقم الموجود أعلى يسار البيان العائلي">
+        <div class="hint">📌 موجود في أعلى يسار البيان العائلي</div>
+        <div class="em" id="e-stmtdoc">الرجاء إدخال رقم الوثيقة</div>
+      </div>
+
+      <!-- رقم وثيقة الطلاق -->
+      <div id="field-divdoc" class="fg" style="display:none">
+        <label class="lbl" for="divdoc">رقم وثيقة الطلاق <span class="req">*</span></label>
+        <input type="text" id="divdoc" placeholder="أدخل رقم وثيقة الطلاق">
+        <div class="em" id="e-divdoc">الرجاء إدخال رقم وثيقة الطلاق</div>
+      </div>
+
+      <!-- رقم القيد — دائماً -->
+      <div class="fg">
+        <label class="lbl" for="qaid">رقم القيد (الخانة) <span class="req">*</span></label>
+        <input type="text" id="qaid" placeholder="أدخل رقم القيد" maxlength="6" oninput="numOnly(this)">
+        <div class="em" id="e-qaid">الرجاء إدخال رقم القيد</div>
+      </div>
+
+      <!-- ─── بيانات رب الأسرة (دفتر عائلة / بيان عائلي) ─── -->
+      <div id="block-husband">
+        <div class="g2">
+          <div class="fg">
+            <label class="lbl" for="h-first">اسم الزوج فقط (دون الكنية) <span class="req">*</span></label>
+            <input type="text" id="h-first" placeholder="الاسم الأول فقط">
+            <div class="em" id="e-h-first">هذا الحقل مطلوب</div>
+          </div>
+          <div class="fg">
+            <label class="lbl" for="h-father">اسم الأب <span class="req">*</span></label>
+            <input type="text" id="h-father" placeholder="اسم الأب">
+            <div class="em" id="e-h-father">هذا الحقل مطلوب</div>
+          </div>
+          <div class="fg">
+            <label class="lbl" for="h-grand">اسم الجد <span class="req">*</span></label>
+            <input type="text" id="h-grand" placeholder="اسم الجد">
+            <div class="em" id="e-h-grand">هذا الحقل مطلوب</div>
+          </div>
+          <div class="fg">
+            <label class="lbl" for="h-family">الكنية (اللقب) <span class="req">*</span></label>
+            <input type="text" id="h-family" placeholder="مثال: الزعبي">
+            <div class="em" id="e-h-family">هذا الحقل مطلوب</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── بيانات المطلقة ─── -->
+      <div id="block-divorced" style="display:none">
+        <div class="fg">
+          <label class="lbl" for="d-name">اسم الزوجة الثلاثي <span class="req">*</span></label>
+          <input type="text" id="d-name" placeholder="الاسم الأول — اسم الأب — اسم الجد">
+          <div class="em" id="e-d-name">الرجاء إدخال اسم الزوجة الثلاثي</div>
+        </div>
+        <div class="fg">
+          <label class="lbl" for="d-family">الكنية (اللقب) <span class="req">*</span></label>
+          <input type="text" id="d-family" placeholder="مثال: الزعبي">
+          <div class="em" id="e-d-family">هذا الحقل مطلوب</div>
+        </div>
+      </div>
+
+      <!-- ختم الوثيقة -->
+      <div class="fg" style="margin-top:4px">
+        <label class="lbl" id="stamp-lbl">هل تم ختم الوثيقة من البلدية واستلمت إيصالاً سابقاً؟ <span class="req">*</span></label>
+        <div class="rg">
+          <label class="sc2 sel" onclick="selR('stamp','نعم مختوم',this)">
+            <input type="radio" name="stamp" value="نعم مختوم" checked>
+            <div class="dot"></div><div class="s-ico">✅</div>
+            <div><div class="rc-em">نعم، مختوم</div><div class="rc-sub">استلمت إيصالاً</div></div>
+          </label>
+          <label class="sc2" onclick="selR('stamp','غير مختوم',this)">
+            <input type="radio" name="stamp" value="غير مختوم">
+            <div class="dot"></div><div class="s-ico">📋</div>
+            <div><div class="rc-em">غير مختوم</div><div class="rc-sub">لم يُختم بعد</div></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn" onclick="next(2)">التالي ←</button>
+        <button class="back" onclick="prev(2)">→ رجوع</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — الأسرة -->
+    <div class="pnl" id="s3">
+      <div class="shdr"><div class="sico">👨‍👩‍👧‍👦</div><div><div class="stit">معلومات الأسرة</div><div class="ssub">عدد الأفراد وموقع السكن</div></div></div>
+      <div class="fg">
+        <label class="lbl">عدد أفراد العائلة <span class="req">*</span></label>
+        <div class="count-grid" id="count-chips"></div>
+        <input type="hidden" id="fcount">
+        <div class="em" id="e-fcount">الرجاء اختيار عدد الأفراد</div>
+      </div>
+      <div class="fg" style="margin-top:6px">
+        <label class="lbl">هل أفراد عائلتك يعيشون في داعل أم في الخارج؟ <span class="req">*</span></label>
+        <div class="rg">
+          <label class="rc sel" onclick="selR('location','داخل داعل',this)">
+            <input type="radio" name="location" value="داخل داعل" checked>
+            <div class="dot"></div><div><div class="rc-em">🏠 داخل داعل</div></div>
+          </label>
+          <label class="rc" onclick="selR('location','خارج داعل',this)">
+            <input type="radio" name="location" value="خارج داعل">
+            <div class="dot"></div><div><div class="rc-em">✈️ خارج داعل</div></div>
+          </label>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="next(3)">التالي ←</button>
+        <button class="back" onclick="prev(3)">→ رجوع</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — السكن -->
+    <div class="pnl" id="s4">
+      <div class="shdr"><div class="sico">📍</div><div><div class="stit">عنوان السكن</div><div class="ssub">حدّد حيّك وشارعك في مدينة داعل</div></div></div>
+      <div class="fg">
+        <label class="lbl">الحي <span class="req">*</span></label>
+        <div class="hood-chips" id="hood-chips">
+          <div class="hchip" onclick="pickHood('الحي الشرقي',this)">🧭 الحي الشرقي</div>
+          <div class="hchip" onclick="pickHood('الحي الغربي',this)">🧭 الحي الغربي</div>
+          <div class="hchip" onclick="pickHood('الحي الشمالي',this)">🧭 الحي الشمالي</div>
+          <div class="hchip" onclick="pickHood('الحي الجنوبي',this)">🧭 الحي الجنوبي</div>
+        </div>
+        <input type="hidden" id="hood">
+        <div class="em" id="e-hood">الرجاء اختيار الحي</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">الشارع أو المعلم القريب <span class="req">*</span></label>
+        <div class="tabs">
+          <div class="tab on" id="tab-rd" onclick="swTab('rd')">🛣️ الشوارع</div>
+          <div class="tab" id="tab-lm" onclick="swTab('lm')">🕌 المساجد</div>
+          <div class="tab" id="tab-sc" onclick="swTab('sc')">🏫 المدارس</div>
+          <div class="tab" id="tab-of" onclick="swTab('of')">🏢 المؤسسات</div>
+        </div>
+        <div id="grp-rd"><div class="str-chips">
+          <div class="schip" onclick="pickStr('الشارع العام (طريق داعل–درعا)',this)">الشارع العام (طريق داعل–درعا)</div>
+          <div class="schip" onclick="pickStr('الشارع الشمالي',this)">الشارع الشمالي</div>
+          <div class="schip" onclick="pickStr('طريق طفس',this)">طريق طفس</div>
+          <div class="schip" onclick="pickStr('الشارع النصاني',this)">الشارع النصاني</div>
+          <div class="schip" onclick="pickStr('شارع السوق',this)">شارع السوق</div>
+          <div class="schip" onclick="pickStr('دوار السوق',this)">دوار السوق</div>
+          <div class="schip" onclick="pickStr('شارع الحديد',this)">شارع الحديد</div>
+          <div class="schip" onclick="pickStr('طريق الخربة',this)">طريق الخربة</div>
+          <div class="schip" onclick="pickStr('الدوار الرئيسي',this)">الدوار الرئيسي</div>
+          <div class="schip" onclick="pickStr('الدوار الجديد',this)">الدوار الجديد</div>
+        </div></div>
+        <div id="grp-lm" style="display:none"><div class="str-chips">
+          <div class="schip lm" onclick="pickStr('الجامع الكبير في داعل',this)">🕌 الجامع الكبير</div>
+          <div class="schip lm" onclick="pickStr('مسجد الهجرة',this)">🕌 مسجد الهجرة</div>
+          <div class="schip lm" onclick="pickStr('مسجد بلال الحبشي',this)">🕌 مسجد بلال الحبشي</div>
+          <div class="schip lm" onclick="pickStr('مسجد السيدة عائشة',this)">🕌 مسجد السيدة عائشة</div>
+        </div></div>
+        <div id="grp-sc" style="display:none"><div class="str-chips">
+          <div class="schip lm" onclick="pickStr('ثانوية داعل الرسمية',this)">🏫 ثانوية داعل الرسمية</div>
+          <div class="schip lm" onclick="pickStr('ثانوية داعل الثانية',this)">🏫 ثانوية داعل الثانية</div>
+        </div></div>
+        <div id="grp-of" style="display:none"><div class="str-chips">
+          <div class="schip lm" onclick="pickStr('بلدية داعل',this)">🏢 بلدية داعل</div>
+          <div class="schip lm" onclick="pickStr('المركز الصحي',this)">🏥 المركز الصحي</div>
+          <div class="schip lm" onclick="pickStr('مركز الشرطة',this)">🚔 مركز الشرطة</div>
+          <div class="schip lm" onclick="pickStr('البريد',this)">📮 البريد</div>
+          <div class="schip lm" onclick="pickStr('دائرة النفوس',this)">📄 دائرة النفوس</div>
+        </div></div>
+        <div class="sw">
+          <input type="text" id="str" placeholder="أو اكتب اسم الشارع / المعلم يدوياً..."
+            oninput="onStrIn()" onfocus="openSb()" onblur="closeSb()" autocomplete="off">
+          <div class="sbox" id="sbox"></div>
+        </div>
+        <input type="hidden" id="str-val">
+        <div class="hint">💡 اختر من الأزرار أو اكتب يدوياً</div>
+        <div class="em" id="e-str">الرجاء تحديد الشارع أو المعلم</div>
+      </div>
+      <div class="fg">
+        <label class="lbl" for="adet">تفاصيل العنوان <span class="req">*</span></label>
+        <textarea id="adet" rows="3" placeholder="مثال: قرب دوار السوق، بناء رقم 7، الطابق الأول..."></textarea>
+        <div class="hint">كلما كانت التفاصيل أدق سهُل التواصل معك</div>
+        <div class="em" id="e-adet">الرجاء إدخال تفاصيل العنوان</div>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="next(4)">مراجعة البيانات ←</button>
+        <button class="back" onclick="prev(4)">→ رجوع</button>
+      </div>
+    </div>
+
+    <!-- STEP 5 — المراجعة -->
+    <div class="pnl" id="s5">
+      <div class="shdr"><div class="sico">🔍</div><div><div class="stit">مراجعة البيانات</div><div class="ssub">تأكد من صحة جميع المعلومات قبل الإرسال</div></div></div>
+      <ul class="sum" id="sumList"></ul>
+      <!-- رقم مرجعي مبدئي -->
+      <div class="ref-preview">
+        <div>
+          <div class="ref-label">🔢 الرقم المرجعي الخاص بك</div>
+          <div class="ref-num" id="ref-preview-num">—</div>
+        </div>
+        <button class="ref-copy" id="ref-copy-btn" onclick="copyRef()">📋 نسخ</button>
+      </div>
+      <div class="cnote">✅ بإرسال هذا الطلب أؤكد أن جميع البيانات صحيحة وأتحمل المسؤولية القانونية الكاملة عن دقتها.</div>
+      <div class="ferr" id="ferr">⚠️ فشل الإرسال. تحقق من الاتصال بالإنترنت وحاول مجدداً.</div>
+      <div class="nav">
+        <button class="btn" id="sbtn" onclick="submitForm()" style="background:linear-gradient(135deg,#1f6b47,#2a9460);box-shadow:0 4px 14px rgba(31,107,71,.28)">
+          ✅ تأكيد وإرسال الطلب
+        </button>
+        <button class="back" onclick="prev(5)">→ تعديل</button>
+      </div>
+    </div>
+
+    <!-- STEP 6 — النجاح -->
+    <div class="pnl" id="s6">
+      <div class="succ">
+        <div class="succ-ico">✓</div>
+        <h2>تم التسجيل بنجاح!</h2>
+        <p>استُلمت بياناتك وستُعالَج من قِبَل بلدية داعل</p>
+        <div class="refbox-big">
+          <small>🔢 رقمك المرجعي — احتفظ به</small>
+          <strong id="refN">DAL-2026-000000</strong>
+        </div>
+        <div class="ref-hint">
+          <strong>⚠️ مهم — لا تفقد هذا الرقم</strong>
+          سيُستخدم لاحقاً للبحث عن حالة طلبك والتحقق من قبوله من خلال صفحة البحث في موقع البلدية.
+        </div>
+        <button class="copy-btn" id="copy-final-btn" onclick="copyFinalRef()">📋 نسخ الرقم المرجعي</button><br>
+        <button class="newbtn" onclick="resetForm()">＋ تسجيل عائلة أخرى</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const ALL_STR=[
+  {n:'الشارع العام (طريق داعل–درعا)',t:'شارع'},{n:'الشارع الشمالي',t:'شارع'},
+  {n:'طريق طفس',t:'طريق'},{n:'الشارع النصاني',t:'شارع'},
+  {n:'شارع السوق',t:'شارع'},{n:'دوار السوق',t:'دوار'},
+  {n:'شارع الحديد',t:'شارع'},{n:'طريق الخربة',t:'طريق'},
+  {n:'الدوار الرئيسي',t:'دوار'},{n:'الدوار الجديد',t:'دوار'},
+  {n:'الجامع الكبير في داعل',t:'مسجد'},{n:'مسجد الهجرة',t:'مسجد'},
+  {n:'مسجد بلال الحبشي',t:'مسجد'},{n:'مسجد السيدة عائشة',t:'مسجد'},
+  {n:'ثانوية داعل الرسمية',t:'مدرسة'},{n:'ثانوية داعل الثانية',t:'مدرسة'},
+  {n:'بلدية داعل',t:'مؤسسة'},{n:'المركز الصحي',t:'مؤسسة'},
+  {n:'مركز الشرطة',t:'مؤسسة'},{n:'البريد',t:'مؤسسة'},{n:'دائرة النفوس',t:'مؤسسة'},
+];
+
+let step=0, docType='book', curRef='';
+const PS=[8,22,38,55,72,88];
+
+// ── رقم مرجعي فريد ──
+function genRef(){
+  const dt=docType==='book'?'DB':docType==='stmt'?'BY':'MT';
+  const yr=new Date().getFullYear();
+  const rnd=Math.floor(100000+Math.random()*900000);
+  return 'DAL-'+yr+'-'+dt+'-'+rnd;
+}
+
+// ── بناء أزرار عدد الأفراد ──
+(function(){
+  const c=document.getElementById('count-chips');
+  ['1','2','3','4','5','6','7','8','9','10','11 فأكثر'].forEach(v=>{
+    const d=document.createElement('div');
+    d.className='chip';d.textContent=v;
+    d.onclick=()=>{
+      document.querySelectorAll('#count-chips .chip').forEach(x=>x.classList.remove('on'));
+      d.classList.add('on');
+      document.getElementById('fcount').value=v;
+      se('fcount',false);
+    };
+    c.appendChild(d);
+  });
+})();
+
+// ── التنقل ──
+function goTo(s){
+  document.getElementById('s'+step).classList.remove('active');
+  step=s; document.getElementById('s'+step).classList.add('active');
+  updStep();
+  document.getElementById('pf').style.width=(s<PS.length?PS[s]:100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function next(f){if(!val(f))return;if(f===4){curRef=genRef();mkSum();}goTo(f+1);}
+function prev(f){goTo(f-1);}
+function updStep(){
+  document.querySelectorAll('.si').forEach((el,i)=>{
+    el.classList.remove('active','done');
+    if(i<step)el.classList.add('done');
+    else if(i===step)el.classList.add('active');
+  });
+  const h=step===6;
+  document.getElementById('stepper').style.display=h?'none':'flex';
+  document.querySelector('.prog').style.display=h?'none':'block';
+}
+
+// ── اختيار بطاقة عامة ──
+function selBC(name,val,el){
+  document.querySelectorAll('[name="'+name+'"]').forEach(r=>r.closest('.bc').classList.remove('sel'));
+  el.classList.add('sel');
+  if(name==='regtype'){
+    document.getElementById('other-note').style.display=val==='other'?'block':'none';
+  }
+}
+
+// ── اختيار نوع الوثيقة ──
+function selDoc(type,el){
+  docType=type;
+  document.querySelectorAll('[name="doctype"]').forEach(r=>r.closest('.bc').classList.remove('sel'));
+  el.classList.add('sel');
+  const isBook=type==='book', isDiv=type==='div', isStmt=type==='stmt';
+  // حقول الأرقام
+  document.getElementById('field-fbook').style.display=isBook?'block':'none';
+  document.getElementById('field-stmtdoc').style.display=isStmt?'block':'none';
+  document.getElementById('field-divdoc').style.display=isDiv?'block':'none';
+  // كتل البيانات
+  document.getElementById('block-husband').style.display=isDiv?'none':'block';
+  document.getElementById('block-divorced').style.display=isDiv?'block':'none';
+  // عنوان الخطوة
+  document.getElementById('s2-tit').textContent=isDiv?'بيانات المطلقة':'بيانات رب الأسرة';
+  document.getElementById('s2-sub').textContent=isDiv?'اسم الزوجة ورقم الوثيقة':'أرقام الوثيقة والاسم الرباعي';
+  document.getElementById('s2-ico').textContent=isDiv?'👩':'📝';
+  // نص ختم الوثيقة
+  const lbl=isBook?'دفتر العائلة':isDiv?'وثيقة الطلاق':'البيان العائلي';
+  document.getElementById('stamp-lbl').innerHTML='هل تم ختم '+lbl+' من البلدية واستلمت إيصالاً سابقاً؟ <span class="req">*</span>';
+}
+// تطبيق الافتراضي
+selDoc('book',document.getElementById('dc-book'));
+
+// ── radio صغير ──
+function selR(name,val,el){
+  document.querySelectorAll('[name="'+name+'"]').forEach(r=>{
+    const p=r.closest('.rc,.sc2');if(p)p.classList.remove('sel');
+  });
+  el.classList.add('sel');
+}
+
+// ── الحي ──
+function pickHood(name,el){
+  document.querySelectorAll('#hood-chips .hchip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');document.getElementById('hood').value=name;se('hood',false);
+}
+
+// ── تبويبات الشارع ──
+function swTab(t){
+  ['rd','lm','sc','of'].forEach(x=>{
+    document.getElementById('tab-'+x).classList.toggle('on',x===t);
+    document.getElementById('grp-'+x).style.display=x===t?'block':'none';
+  });
+}
+function pickStr(name,el){
+  document.querySelectorAll('.str-chips .schip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');document.getElementById('str').value=name;
+  document.getElementById('str-val').value=name;
+  document.getElementById('sbox').classList.remove('open');se('str',false);
+}
+function onStrIn(){
+  const q=document.getElementById('str').value.trim();
+  document.getElementById('str-val').value=q;
+  if(q)document.querySelectorAll('.str-chips .schip').forEach(c=>c.classList.remove('on'));
+  renderSb(q?ALL_STR.filter(x=>x.n.includes(q)):ALL_STR);
+  document.getElementById('sbox').classList.add('open');
+}
+function renderSb(list){
+  const b=document.getElementById('sbox');
+  if(!list.length){b.innerHTML='<div class="si2" style="color:var(--mu)">سيُسجَّل ما كتبته</div>';return;}
+  b.innerHTML=list.map(x=>`<div class="si2" onmousedown="pickFrBox('${x.n.replace(/'/g,"\\'")}')"><span>${x.n}</span><span class="st">${x.t}</span></div>`).join('');
+}
+function pickFrBox(name){
+  document.getElementById('str').value=name;document.getElementById('str-val').value=name;
+  document.getElementById('sbox').classList.remove('open');se('str',false);
+}
+function openSb(){renderSb(ALL_STR);document.getElementById('sbox').classList.add('open');}
+function closeSb(){setTimeout(()=>document.getElementById('sbox').classList.remove('open'),180);}
+function numOnly(el){el.value=el.value.replace(/[^0-9]/g,'');}
+
+// ── التحقق ──
+function se(id,show){
+  const e=document.getElementById('e-'+id),i=document.getElementById(id);
+  if(e)e.classList.toggle('show',show);if(i)i.classList.toggle('er',show);
+}
+function val(s){
+  let ok=true;
+  if(s===1){/* نوع الوثيقة — دائماً محدد */}
+  if(s===2){
+    if(docType==='book'){
+      const fb=document.getElementById('fbook').value.trim();
+      if(fb.length<6||fb.length>9){se('fbook',true);ok=false;}else se('fbook',false);
+    }
+    if(docType==='stmt'){
+      if(!document.getElementById('stmtdoc').value.trim()){se('stmtdoc',true);ok=false;}else se('stmtdoc',false);
+    }
+    if(docType==='div'){
+      if(!document.getElementById('divdoc').value.trim()){se('divdoc',true);ok=false;}else se('divdoc',false);
+    }
+    const qd=document.getElementById('qaid').value.trim();
+    if(!qd){se('qaid',true);ok=false;}else se('qaid',false);
+    if(docType==='div'){
+      if(!document.getElementById('d-name').value.trim()){se('d-name',true);ok=false;}else se('d-name',false);
+      if(!document.getElementById('d-family').value.trim()){se('d-family',true);ok=false;}else se('d-family',false);
+    }else{
+      ['h-first','h-father','h-grand','h-family'].forEach(id=>{
+        if(!document.getElementById(id).value.trim()){se(id,true);ok=false;}else se(id,false);
+      });
+    }
+  }
+  if(s===3){if(!document.getElementById('fcount').value){se('fcount',true);ok=false;}else se('fcount',false);}
+  if(s===4){
+    if(!document.getElementById('hood').value){se('hood',true);ok=false;}else se('hood',false);
+    const st=document.getElementById('str-val').value.trim()||document.getElementById('str').value.trim();
+    if(!st){se('str',true);ok=false;}else se('str',false);
+    if(document.getElementById('adet').value.trim().length<5){se('adet',true);ok=false;}else se('adet',false);
+  }
+  return ok;
+}
+
+// ── ملخص ──
+function mkSum(){
+  const isBook=docType==='book',isDiv=docType==='div';
+  const regType=document.querySelector('[name="regtype"]:checked')?.value;
+  const strVal=document.getElementById('str-val').value||document.getElementById('str').value;
+  const docLabel=isBook?'دفتر العائلة':isDiv?'مطلقة':'البيان العائلي';
+  const rows=[
+    ['sec','👥 نوع التسجيل'],
+    ['التسجيل', regType==='self'?'تسجيل لنفسي':'تسجيل لشخص آخر'],
+    ['sec','📄 الوثيقة'],
+    ['نوع الوثيقة', docLabel],
+    ...(isBook?[['رقم دفتر العائلة', document.getElementById('fbook').value]]:[]),
+    ...(!isBook&&!isDiv?[['رقم الوثيقة', document.getElementById('stmtdoc').value]]:[]),
+    ...(isDiv?[['رقم وثيقة الطلاق', document.getElementById('divdoc').value]]:[]),
+    ['رقم القيد (الخانة)', document.getElementById('qaid').value],
+    ['ختم الوثيقة', document.querySelector('[name="stamp"]:checked')?.value||'—'],
+    ['sec', isDiv?'👩 بيانات المطلقة':'👤 رب الأسرة'],
+    ...(isDiv?[
+      ['اسم الزوجة الثلاثي', document.getElementById('d-name').value],
+      ['الكنية', document.getElementById('d-family').value],
+    ]:[
+      ['اسم الزوج', document.getElementById('h-first').value],
+      ['اسم الأب', document.getElementById('h-father').value],
+      ['اسم الجد', document.getElementById('h-grand').value],
+      ['الكنية', document.getElementById('h-family').value],
+    ]),
+    ['sec','👨‍👩‍👧‍👦 الأسرة'],
+    ['عدد الأفراد', document.getElementById('fcount').value],
+    ['موقع الأسرة', document.querySelector('[name="location"]:checked')?.value||'—'],
+    ['sec','📍 عنوان السكن'],
+    ['الحي', document.getElementById('hood').value],
+    ['الشارع / المعلم', strVal],
+    ['تفاصيل العنوان', document.getElementById('adet').value],
+  ];
+  document.getElementById('sumList').innerHTML=rows.map(([k,v])=>
+    k==='sec'
+      ?`<li><div class="sum-sec">${v}</div></li>`
+      :`<li class="srow"><span class="sk">${k}</span><span class="sv">${v}</span></li>`
+  ).join('');
+  document.getElementById('ref-preview-num').textContent=curRef;
+}
+
+// ── نسخ الرقم المرجعي ──
+function copyRef(){
+  navigator.clipboard?.writeText(curRef).catch(()=>{});
+  const btn=document.getElementById('ref-copy-btn');
+  btn.textContent='✅ تم النسخ';btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent='📋 نسخ';btn.classList.remove('copied');},2000);
+}
+function copyFinalRef(){
+  navigator.clipboard?.writeText(curRef).catch(()=>{});
+  const btn=document.getElementById('copy-final-btn');
+  btn.textContent='✅ تم نسخ الرقم';btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent='📋 نسخ الرقم المرجعي';btn.classList.remove('copied');},2500);
+}
+
+// ── الإرسال ──
+const FURL='/.netlify/functions/submit';
+async function submitForm(){
+  const btn=document.getElementById('sbtn');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> جاري الإرسال...';
+  document.getElementById('ferr').style.display='none';
+  const isBook=docType==='book',isDiv=docType==='div';
+  const strVal=document.getElementById('str-val').value||document.getElementById('str').value;
+  const payload={
+    refNum:curRef,
+    timestamp:new Date().toLocaleString('ar-SY'),
+    municipality:'بلدية داعل — محافظة درعا',
+    regType:document.querySelector('[name="regtype"]:checked')?.value==='self'?'تسجيل لنفسي':'تسجيل لشخص آخر',
+    docType:isBook?'دفتر العائلة':isDiv?'مطلقة':'البيان العائلي',
+    familyBookNum:isBook?document.getElementById('fbook').value:'—',
+    stmtDocNum:(!isBook&&!isDiv)?document.getElementById('stmtdoc').value:'—',
+    divDocNum:isDiv?document.getElementById('divdoc').value:'—',
+    qaidNum:document.getElementById('qaid').value,
+    stampStatus:document.querySelector('[name="stamp"]:checked')?.value,
+    personName:isDiv
+      ?document.getElementById('d-name').value+' '+document.getElementById('d-family').value
+      :[document.getElementById('h-first').value,document.getElementById('h-father').value,document.getElementById('h-grand').value,document.getElementById('h-family').value].join(' '),
+    familyCount:document.getElementById('fcount').value,
+    familyLocation:document.querySelector('[name="location"]:checked')?.value,
+    neighborhood:document.getElementById('hood').value,
+    street:strVal,
+    addressDetail:document.getElementById('adet').value,
+    fullAddress:document.getElementById('hood').value+' — '+strVal+' — '+document.getElementById('adet').value,
+    status:'قيد المراجعة',
+  };
+  if(window.location.protocol==='file:'){await new Promise(r=>setTimeout(r,1400));showOk();return;}
+  try{
+    const r=await fetch(FURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!r.ok)throw new Error();
+    showOk();
+  }catch{
+    btn.disabled=false;btn.innerHTML='✅ تأكيد وإرسال الطلب';
+    document.getElementById('ferr').style.display='flex';
+  }
+}
+function showOk(){
+  document.getElementById('refN').textContent=curRef;
+  document.getElementById('s5').classList.remove('active');
+  step=6;document.getElementById('s6').classList.add('active');
+  document.getElementById('pf').style.width='100%';updStep();
+}
+
+// ── إعادة التعيين ──
+function resetForm(){
+  document.querySelectorAll('input[type=text],textarea').forEach(e=>e.value='');
+  document.querySelectorAll('input[type=hidden]').forEach(e=>e.value='');
+  document.querySelectorAll('.rc,.sc2').forEach(c=>c.classList.remove('sel'));
+  document.querySelector('[name="stamp"][value="نعم مختوم"]').closest('.sc2').classList.add('sel');
+  document.querySelector('[name="location"][value="داخل داعل"]').closest('.rc').classList.add('sel');
+  document.querySelectorAll('.chip,.hchip,.schip').forEach(c=>c.classList.remove('on'));
+  document.getElementById('sbox').classList.remove('open');
+  swTab('rd');
+  selBC('regtype','self',document.getElementById('rc-self'));
+  selDoc('book',document.getElementById('dc-book'));
+  curRef='';
+  document.getElementById('s6').classList.remove('active');
+  step=0;document.getElementById('s0').classList.add('active');
+  document.getElementById('pf').style.width='8%';updStep();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
