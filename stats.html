@@ -130,13 +130,14 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);min-height:100vh;direct
   <div class="refresh-bar">
     <div class="refresh-info">
       <div class="dot-live" id="dot-live"></div>
-      <span id="refresh-status">جاري تحميل البيانات...</span>
+      <span id="refresh-status">جاري الاتصال بـ Google Sheet...</span>
     </div>
     <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">🔄 تحديث الآن</button>
   </div>
 
   <div class="error-box" id="error-box">
-    ⚠️ تعذّر تحميل البيانات. تأكد من اتصالك بالإنترنت وحاول مجدداً.
+    ⚠️ تعذّر الاتصال بـ Google Sheet.<br>
+    تأكد من أن <strong>GOOGLE_SCRIPT_URL</strong> مضبوط في Netlify وأن الـ Script منشور بصلاحية <strong>Anyone</strong>.
   </div>
 
   <!-- ══ شبكة الإحصائيات الأربع ══ -->
@@ -216,11 +217,11 @@ async function loadAll() {
   const btn = document.getElementById('refresh-btn');
   btn.disabled = true;
   btn.innerHTML = '⏳ جاري التحميل...';
-  set('refresh-status', 'جاري تحميل البيانات...');
+  set('refresh-status', 'جاري الاتصال بـ Google Sheet...');
   document.getElementById('error-box').style.display = 'none';
   document.getElementById('dot-live').classList.remove('err');
 
-  // وضع تجريبي عند فتح الملف مباشرة
+  // وضع تجريبي عند فتح الملف مباشرة (بدون Netlify)
   if (window.location.protocol === 'file:') {
     await new Promise(r => setTimeout(r, 900));
     render({
@@ -240,11 +241,11 @@ async function loadAll() {
     if (data.status !== 'OK') throw new Error(data.msg || 'خطأ غير معروف');
     render(data);
     set('refresh-status',
-      'آخر تحديث: ' + new Date().toLocaleTimeString('ar-SY'));
+      'آخر تحديث: ' + new Date().toLocaleTimeString('ar-SY') + ' — مباشر من Google Sheet');
   } catch(err) {
     document.getElementById('error-box').style.display = 'block';
     document.getElementById('dot-live').classList.add('err');
-    set('refresh-status', 'تعذّر تحميل البيانات');
+    set('refresh-status', 'فشل الاتصال — ' + err.message);
     showToast('⚠️ تعذّر تحميل البيانات');
   }
 
