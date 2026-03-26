@@ -1,0 +1,21 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+# منع الوصول المباشر لملفات الإعداد
+[[headers]]
+  for = "/.env"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+# Headers أمنية للموقع
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# إعدادات الـ Functions
+[functions]
+  directory = "netlify/functions"
